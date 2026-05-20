@@ -421,7 +421,33 @@ root.mainloop()
 
 
 #YBAÑEZ
+deleted_products = []
+inventory = []
 
+def view_deleted_products():
+    print("\n--- Deleted Products ---")
+    if not deleted_products:
+        print("No deleted products found.")
+    else:
+        for product in deleted_products:
+            print(f"Product Number: {product['number']}, "
+                  f"Name: {product['name']}, "
+                  f"Unit: {product['unit']}, "
+                  f"Quantity: {product['quantity']}, "
+                  f"Price: {product['price']}")
+    print("------------------------")
+
+def restore_product(product_number):
+    for product in deleted_products:
+        if product['number'] == product_number:
+            inventory.append(product)
+            deleted_products.remove(product)
+            print(f"\n Product number {product_number} has been successfully restored!\n")
+            return
+    print(f"\n Product number {product_number} not found in deleted products.\n")
+
+def return_to_main_menu():
+    print("\nReturning to Main Menu...\n")
 
 
 
