@@ -293,7 +293,7 @@ def delete_product_screen():
 
 
 # CLEAR SCREEN FUNCTION
-
+    
 
 def clear_screen():
     for widget in root.winfo_children():
