@@ -176,7 +176,191 @@ while True:
 
 
 #Ranile
+import tkinter as tk
+from tkinter import messagebox
 
+# UPDATE INVENTORY
+def update_inventory():
+
+    clear_screen()
+
+    titleLabel = tk.Label(root,
+                          text="UPDATE INVENTORY",
+                          font=("Arial", 18))
+
+    titleLabel.pack(pady=10)
+
+    # PRODUCT NUMBER
+    productNumberLabel = tk.Label(root,
+                                  text="Enter Product Number")
+
+    productNumberLabel.pack()
+
+    productNumberEntry = tk.Entry(root,
+                                  width=30)
+
+    productNumberEntry.pack(pady=5)
+
+    # PRODUCT NAME
+    productNameLabel = tk.Label(root,
+                                text="Product Name")
+
+    productNameLabel.pack()
+
+    productNameEntry = tk.Entry(root,
+                                width=30)
+
+    productNameEntry.pack(pady=5)
+
+    # PRODUCT UNIT
+    productUnitLabel = tk.Label(root,
+                                text="Product Unit")
+
+    productUnitLabel.pack()
+
+    productUnitEntry = tk.Entry(root,
+                                width=30)
+
+    productUnitEntry.pack(pady=5)
+
+    # PRODUCT QUANTITY
+    productQuantityLabel = tk.Label(root,
+                                    text="Product Quantity")
+
+    productQuantityLabel.pack()
+
+    productQuantityEntry = tk.Entry(root,
+                                    width=30)
+
+    productQuantityEntry.pack(pady=5)
+
+    # PRODUCT PRICE
+    productPriceLabel = tk.Label(root,
+                                 text="Product Price")
+
+    productPriceLabel.pack()
+
+    productPriceEntry = tk.Entry(root,
+                                 width=30)
+
+    productPriceEntry.pack(pady=5)
+
+    # SEARCH PRODUCT FUNCTION
+    def search_product():
+
+        productNumber = productNumberEntry.get()
+
+        found = False
+
+        try:
+
+            with open(file_name, "r") as file:
+
+                lines = file.readlines()
+
+                for line in lines:
+
+                    data = line.strip().split(",")
+
+                    if data[0] == productNumber:
+
+                        found = True
+
+                        # DISPLAY PRODUCT INFO
+
+                        productNameEntry.delete(0, tk.END)
+                        productNameEntry.insert(0, data[1])
+
+                        productUnitEntry.delete(0, tk.END)
+                        productUnitEntry.insert(0, data[2])
+
+                        productQuantityEntry.delete(0, tk.END)
+                        productQuantityEntry.insert(0, data[3])
+
+                        productPriceEntry.delete(0, tk.END)
+                        productPriceEntry.insert(0, data[4])
+
+                        break
+
+                if found == False:
+
+                    messagebox.showerror("ERROR",
+                                         "Product not found!")
+
+        except FileNotFoundError:
+
+            messagebox.showerror("ERROR",
+                                 "Inventory file not found!")
+
+    # UPDATE PRODUCT FUNCTION
+    def update_product():
+
+        productNumber = productNumberEntry.get()
+
+        try:
+
+            with open(file_name, "r") as file:
+
+                lines = file.readlines()
+
+            updatedLines = []
+
+            for line in lines:
+
+                data = line.strip().split(",")
+
+                if data[0] == productNumber:
+
+                    updatedLine = (
+                        f"{productNumber},"
+                        f"{productNameEntry.get()},"
+                        f"{productUnitEntry.get()},"
+                        f"{productQuantityEntry.get()},"
+                        f"{productPriceEntry.get()}\n"
+                    )
+
+                    updatedLines.append(updatedLine)
+
+                else:
+
+                    updatedLines.append(line)
+
+            with open(file_name, "w") as file:
+
+                file.writelines(updatedLines)
+
+            messagebox.showinfo(
+                "UPDATED",
+                f"Product number {productNumber} "
+                f"has successfully been updated!"
+            )
+
+        except FileNotFoundError:
+
+            messagebox.showerror("ERROR",
+                                 "Inventory file not found!")
+
+    # BUTTONS
+    searchButton = tk.Button(root,
+                             text="Search Product",
+                             width=20,
+                             command=search_product)
+
+    searchButton.pack(pady=5)
+
+    updateButton = tk.Button(root,
+                             text="Update",
+                             width=20,
+                             command=update_product)
+
+    updateButton.pack(pady=10)
+
+    returnButton = tk.Button(root,
+                             text="Return",
+                             width=20,
+                             command=main_menu)
+
+    returnButton.pack(pady=5)
 
 
 
