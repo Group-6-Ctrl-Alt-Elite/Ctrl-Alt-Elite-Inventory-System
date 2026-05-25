@@ -400,6 +400,54 @@ def update_inventory():
 
 
 #YEE
+def main_menu():
+    clear_window()
+    
+    title = tk.Label(root, text="Main Menu", font=("Arial", 16))
+    title.pack(pady=20)
+    
+    view_btn = tk.Button(root, text="View Inventory", command=display_inventory)
+    view_btn.pack(pady=10)
+
+def clear_window():
+    for widget in root.winfo_children():
+        widget.destroy()
+
+
+def display_inventory():
+    clear_window()
+    
+    title = tk.Label(root, text="Full Inventory", font=("Arial", 16))
+    title.pack(pady=10)
+
+    total_products = 0
+    total_price = 0
+
+    for item in products:
+        name = item["name"]
+        unit = item["unit"]
+        qty = item["quantity"]
+        price = item["price"]
+        
+        total_products += qty
+        total_price += qty * price
+        
+        info = f"Product: {name} | Unit: {unit} | Quantity: {qty} | Price: {price}"
+        label = tk.Label(root, text=info)
+        label.pack(anchor="w", padx=20)
+
+    # Totals
+    tk.Label(root, text="").pack()  # spacer
+    tk.Label(root, text=f"Overall Products: {total_products}", font=("Arial", 12, "bold")).pack()
+    tk.Label(root, text=f"Overall Price: {total_price}", font=("Arial", 12, "bold")).pack()
+
+    # Return Button
+    return_btn = tk.Button(root, text="Return", command=main_menu)
+    return_btn.pack(pady=20)
+
+
+main_menu()
+root.mainloop()
 
 
 
