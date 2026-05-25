@@ -413,7 +413,6 @@ def clear_window():
     for widget in root.winfo_children():
         widget.destroy()
 
-
 def display_inventory():
     clear_window()
     
