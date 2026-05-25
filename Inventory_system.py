@@ -26,89 +26,138 @@ def clear_screen():
         widget.destroy()
 
 
-def display_inventory():
-    clear_window()
-    
-    title = tk.Label(root, text="Full Inventory", font=("Arial", 16))
-    title.pack(pady=10)
+def read_inventory():
+    products = []
+    if not os.path.exists(file_name):
+        return products
 
-    total_products = 0
-    total_price = 0
-
-    for item in products:
-        name = item["name"]
-        unit = item["unit"]
-        qty = item["quantity"]
-        price = item["price"]
-        
-        total_products += qty
-        total_price += qty * price
-        
-        info = f"Product: {name} | Unit: {unit} | Quantity: {qty} | Price: {price}"
-        label = tk.Label(root, text=info)
-        label.pack(anchor="w", padx=20)
-
-    # Totals
-    tk.Label(root, text="").pack()  # spacer
-    tk.Label(root, text=f"Overall Products: {total_products}", font=("Arial", 12, "bold")).pack()
-    tk.Label(root, text=f"Overall Price: {total_price}", font=("Arial", 12, "bold")).pack()
-
-    # Return Button
-    return_btn = tk.Button(root, text="Return", command=main_menu)
-    return_btn.pack(pady=20)
+    with open(file_name, "r", encoding="utf-8") as file:
+        for line in file:
+            line = line.strip()
+            if not line:
+                continue
+            parts = line.split(",")
+            if len(parts) != 5:
+                continue
+            products.append({
+                "number": parts[0],
+                "name": parts[1],
+                "unit": parts[2],
+                "quantity": parts[3],
+                "price": parts[4]
+            })
+    return products
 
 
-main_menu()
-root.mainloop()
+def write_inventory(products):
+    with open(file_name, "w", encoding="utf-8") as file:
+        for product in products:
+            line = ",".join([
+                product["number"],
+                product["name"],
+                product["unit"],
+                product["quantity"],
+                product["price"]
+            ])
+            file.write(line + "\n")
 
 
+def read_deleted_inventory():
+    deleted_products = []
+    if not os.path.exists(deleted_file_name):
+        return deleted_products
+
+    with open(deleted_file_name, "r", encoding="utf-8") as file:
+        for line in file:
+            line = line.strip()
+            if not line:
+                continue
+            parts = line.split(",")
+            if len(parts) != 5:
+                continue
+            deleted_products.append({
+                "number": parts[0],
+                "name": parts[1],
+                "unit": parts[2],
+                "quantity": parts[3],
+                "price": parts[4]
+            })
+    return deleted_products
 
 
+def write_deleted_inventory(products):
+    with open(deleted_file_name, "w", encoding="utf-8") as file:
+        for product in products:
+            line = ",".join([
+                product["number"],
+                product["name"],
+                product["unit"],
+                product["quantity"],
+                product["price"]
+            ])
+            file.write(line + "\n")
 
 
+def append_deleted_product(product):
+    with open(deleted_file_name, "a", encoding="utf-8") as file:
+        line = ",".join([
+            product["number"],
+            product["name"],
+            product["unit"],
+            product["quantity"],
+            product["price"]
+        ])
+        file.write(line + "\n")
 
 
+def get_next_product_number(products):
+    if not products:
+        return "1"
+    numbers = [int(p["number"]) for p in products if p["number"].isdigit()]
+    return str(max(numbers, default=0) + 1)
 
 
+def renumber_products(products):
+    for index, product in enumerate(products, start=1):
+        product["number"] = str(index)
+    return products
 
 
+def show_login_screen():
+    clear_screen()
+    root.configure(bg="#39DEE4") 
 
+    tk.Label(root, text="\nWELCOME TO THE CTRL ALT ELITE", font=("Courier", 16, "bold"), pady=10, bg="#3FD8DD").pack()
+    tk.Label(root, text="INVENTORY SYSTEM\n", font=("Courier", 16, "bold"), pady=10, bg="#3FD8DD").pack()
+    tk.Label(root, text="\nUSER LOG IN\n", bg="#39DEE4", font=("Courier", 14, "bold")).pack(pady=5)
 
+    tk.Label(root, text="Username:", bg="#39DEE4", anchor="w").pack(fill="x", padx=20, pady=(15, 0))
+    username_var = tk.StringVar(value="Admin")
+    tk.OptionMenu(root, username_var, *Users.keys()).pack(fill="x", padx=40)
 
+    tk.Label(root, text="Password:", bg="#39DEE4", anchor="w").pack(fill="x", padx=20, pady=(10, 0))
+    password_entry = tk.Entry(root, show="*")
+    password_entry.pack(fill="x", padx=40)
 
+# LOGIN FUNCTION
+    def login():
+        username = username_var.get().strip()
+        password = password_entry.get().strip()
+        print(f"username: '{username}' password: '{password}'")
+        print(f"users: {list(Users.keys())}")
+        normalized_users = {u.casefold(): p for u, p in Users.items()}
+        normalized_username = username.casefold()
+        if normalized_username in normalized_users and normalized_users[normalized_username] == password:
+            messagebox.showinfo("Login", "Login successful.")
+            show_main_menu()
+        else:
+            if normalized_username not in normalized_users:
+                messagebox.showerror("Login Failed", "Username not found.")
+            else:
+                messagebox.showerror("Login Failed", "Password is wrong. Passwords are case-sensitive.")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#TUPAG
-import tkinter as tk
-from tkinter import messagebox
-
-file_name = "Inventory_system.txt"
-
-root = tk.Tk()
-root.title("Inventory System")
-root.geometry("500x400")
-
+    tk.Button(root, text="Sign In", width=15, command=login).pack(pady=20)
+    tk.Button(root, text="Exit", width=15, command=root.destroy).pack()
 
 # MAIN MENU
 def show_main_menu():
