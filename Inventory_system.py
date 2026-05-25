@@ -547,7 +547,7 @@ def view_inventory():
 
 def delete_product_screen():
     clear_screen()
-
+ 
     tk.Label(root,
              text="DELETE PRODUCT",
              font=("Arial", 16)).pack(pady=10)
