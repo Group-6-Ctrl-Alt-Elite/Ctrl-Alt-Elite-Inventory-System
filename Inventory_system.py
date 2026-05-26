@@ -247,9 +247,18 @@ def show_inventory_screen():
         inventory_text.insert(tk.END, "No inventory records found.\n")
     else:
         for product in products:
+            try:
+                quantity = int(product['quantity'])
+            except ValueError:
+                quantity = 0
+            try:
+                price = float(product['price'])
+            except ValueError:
+                price = 0.0
+            total_price = quantity * price
             inventory_text.insert(
                 tk.END,
-                f"#{product['number']} | {product['name']} | {product['unit']} | Qty: {product['quantity']} | Price: {product['price']}\n"
+                f"#{product['number']} | {product['name']} | {product['unit']} | Qty: {product['quantity']} | Price: {product['price']} | Total: {total_price:.2f}\n"
             )
 
     inventory_text.configure(state="disabled")
